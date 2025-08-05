@@ -32,8 +32,8 @@ export default function HomeScreen({ buttonColor = 'whitesmoke', buttonOpacity =
 
     const animation1 = createAnimation(wave1, 5000, 0);
     const animation2 = createAnimation(wave2, 6000, -1000);
-    const animation3 = createAnimation(wave3, 7000, -2000);
-    const animation4 = createAnimation(wave4, 8000, -3000);
+    const animation3 = createAnimation(wave3, 6000, -2000);
+    const animation4 = createAnimation(wave4, 7000, -3000);
 
     animation1.start();
     animation2.start();
@@ -108,9 +108,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    height: height * 0.15,
-    minHeight: 100,
-    maxHeight: 150,
+    height: height * 0.5,
+    minHeight: 150,
+    maxHeight: 250,
   },
   waves: {
     width: '100%',
