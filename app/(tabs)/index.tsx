@@ -1,10 +1,44 @@
-import React, { useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, Dimensions, Animated, Easing } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { StyleSheet, View, Text, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Defs, Path, G, Use } from 'react-native-svg';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  useAnimatedProps,
+  withTiming,
+  withRepeat,
+  withSequence,
+  Easing,
+  runOnJS,
+} from 'react-native-reanimated';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('window');
 const AnimatedG = Animated.createAnimatedComponent(G);
+
+interface PulseType {
+  id: number;
+}
+
+const Pulse = ({ onComplete }: { onComplete: () => void }) => {
+  const pulse = useSharedValue(1);
+
+  useEffect(() => {
+    pulse.value = withTiming(2.5, { duration: 500 }, (isFinished) => {
+      if (isFinished) {
+        runOnJS(onComplete)();
+      }
+    });
+  }, [pulse, onComplete]);
+
+  const animatedPulseStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pulse.value }],
+    opacity: 1 - pulse.value / 2.5,
+  }));
+
+  return <Animated.View style={[styles.pulse, animatedPulseStyle]} />;
+};
 
 interface HomeScreenProps {
   buttonColor?: string;
@@ -12,48 +46,45 @@ interface HomeScreenProps {
 }
 
 export default function HomeScreen({ buttonColor = 'whitesmoke', buttonOpacity = 0.8 }: HomeScreenProps) {
-  const wave1 = useRef(new Animated.Value(0)).current;
-  const wave2 = useRef(new Animated.Value(0)).current;
-  const wave3 = useRef(new Animated.Value(0)).current;
-  const wave4 = useRef(new Animated.Value(0)).current;
+  const wave1 = useSharedValue(-90);
+  const wave2 = useSharedValue(-90);
+  const wave3 = useSharedValue(-90);
+  const wave4 = useSharedValue(-90);
+  const opacity = useSharedValue(buttonOpacity);
+  const [pulses, setPulses] = useState<PulseType[]>([]);
 
-  useEffect(() => {
-    const createAnimation = (animatedValue: Animated.Value, duration: number, delay: number) => {
-      return Animated.loop(
-        Animated.timing(animatedValue, {
-          toValue: 1,
-          duration,
-          easing: Easing.linear,
-          useNativeDriver: true,
-          delay,
-        })
-      );
-    };
-
-    const animation1 = createAnimation(wave1, 5000, 0);
-    const animation2 = createAnimation(wave2, 6000, -1000);
-    const animation3 = createAnimation(wave3, 6000, -2000);
-    const animation4 = createAnimation(wave4, 7000, -3000);
-
-    animation1.start();
-    animation2.start();
-    animation3.start();
-    animation4.start();
-
-    return () => {
-      animation1.stop();
-      animation2.stop();
-      animation3.stop();
-      animation4.stop();
-    };
+  const addPulse = useCallback(() => {
+    setPulses((currentPulses) => [...currentPulses, { id: Date.now() }]);
   }, []);
 
-  const getTranslateX = (animatedValue: Animated.Value) => {
-    return animatedValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [-90, 85],
+  const removePulse = useCallback((id: number) => {
+    setPulses((currentPulses) => currentPulses.filter((p) => p.id !== id));
+  }, []);
+
+  useEffect(() => {
+    wave1.value = withRepeat(withTiming(85, { duration: 5000, easing: Easing.linear }), -1, true);
+    wave2.value = withRepeat(withTiming(85, { duration: 6000, easing: Easing.linear }), -1, true);
+    wave3.value = withRepeat(withTiming(85, { duration: 7000, easing: Easing.linear }), -1, true);
+    wave4.value = withRepeat(withTiming(85, { duration: 8000, easing: Easing.linear }), -1, true);
+  }, [wave1, wave2, wave3, wave4]);
+
+  const animatedWave1Props = useAnimatedProps(() => ({ translateX: wave1.value }));
+  const animatedWave2Props = useAnimatedProps(() => ({ translateX: wave2.value }));
+  const animatedWave3Props = useAnimatedProps(() => ({ translateX: wave3.value }));
+  const animatedWave4Props = useAnimatedProps(() => ({ translateX: wave4.value }));
+
+  const animatedOpacityStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  const tap = Gesture.Tap()
+    .onBegin(() => {
+      runOnJS(addPulse)();
+      opacity.value = withSequence(
+        withTiming(1, { duration: 150 }),
+        withTiming(buttonOpacity, { duration: 250 })
+      );
     });
-  };
 
   return (
     <View style={styles.container}>
@@ -63,11 +94,16 @@ export default function HomeScreen({ buttonColor = 'whitesmoke', buttonOpacity =
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
       />
-      <View style={[styles.waterDrop, { backgroundColor: buttonColor, opacity: buttonOpacity }]}>
-        <Text style={styles.plusSign}>+</Text>
-        <View style={styles.beforeHighlight} />
-        <View style={styles.afterHighlight} />
-      </View>
+      <GestureDetector gesture={tap}>
+        <Animated.View style={[styles.waterDrop, { backgroundColor: buttonColor }, animatedOpacityStyle]}>
+          {pulses.map((p) => (
+            <Pulse key={p.id} onComplete={() => removePulse(p.id)} />
+          ))}
+          <Text style={styles.plusSign}>+</Text>
+          <View style={styles.beforeHighlight} />
+          <View style={styles.afterHighlight} />
+        </Animated.View>
+      </GestureDetector>
       <View style={styles.waveContainer}>
         <Svg
           style={styles.waves}
@@ -80,16 +116,16 @@ export default function HomeScreen({ buttonColor = 'whitesmoke', buttonOpacity =
               d="M-160 44c30 0 58-18 88-18s58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
             />
           </Defs>
-          <AnimatedG translateX={getTranslateX(wave1)}>
+          <AnimatedG animatedProps={animatedWave1Props}>
             <Use href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7)" />
           </AnimatedG>
-          <AnimatedG translateX={getTranslateX(wave2)}>
+          <AnimatedG animatedProps={animatedWave2Props}>
             <Use href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
           </AnimatedG>
-          <AnimatedG translateX={getTranslateX(wave3)}>
+          <AnimatedG animatedProps={animatedWave3Props}>
             <Use href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
           </AnimatedG>
-          <AnimatedG translateX={getTranslateX(wave4)}>
+          <AnimatedG animatedProps={animatedWave4Props}>
             <Use href="#gentle-wave" x="48" y="7" fill="#fff" />
           </AnimatedG>
         </Svg>
@@ -108,9 +144,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    height: height * 0.5,
-    minHeight: 150,
-    maxHeight: 250,
+    height: height * 0.15,
+    minHeight: 100,
+    maxHeight: 150,
   },
   waves: {
     width: '100%',
@@ -131,6 +167,14 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, 0.1)',
     borderWidth: 1,
     zIndex: 1,
+  },
+  pulse: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    borderRadius: 100,
+    backgroundColor: 'whitesmoke',
+    zIndex: 0,
   },
   plusSign: {
     fontSize: 100,
