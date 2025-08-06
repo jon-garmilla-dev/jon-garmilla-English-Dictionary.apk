@@ -22,6 +22,7 @@ const MAPPING = {
   'questionmark.circle': 'help-outline',
   'speaker.wave.2.fill': 'volume-up',
   'xmark': 'close',
+  'list.bullet': 'format-list-bulleted',
 } as IconMapping;
 
 /**

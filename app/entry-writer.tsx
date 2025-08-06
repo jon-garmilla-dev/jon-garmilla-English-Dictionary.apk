@@ -47,10 +47,20 @@ export default function EntryWriterModal() {
 
   const handleAddEntry = async (word: string, phonetic: string) => {
     try {
-      const storedEntries = await AsyncStorage.getItem('entries');
-      const currentEntries = storedEntries ? JSON.parse(storedEntries) : [];
-      const newEntries = [...currentEntries, { word, phonetic }];
-      await AsyncStorage.setItem('entries', JSON.stringify(newEntries));
+      const todayString = new Date().toLocaleDateString();
+      const storedRunString = await AsyncStorage.getItem('currentRun');
+      const currentRun = storedRunString ? JSON.parse(storedRunString) : { date: todayString, entries: [] };
+      
+      // Ensure we are adding to today's run, even if the stored one is old (should be handled by run screen, but as a safeguard)
+      if (currentRun.date !== todayString) {
+        currentRun.entries = [];
+        currentRun.date = todayString;
+      }
+
+      const newEntries = [...currentRun.entries, { word, phonetic }];
+      const newRun = { ...currentRun, entries: newEntries };
+      
+      await AsyncStorage.setItem('currentRun', JSON.stringify(newRun));
       router.back();
     } catch (e) {
       console.error("Failed to save new entry.", e);

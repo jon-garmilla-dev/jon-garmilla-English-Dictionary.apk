@@ -1,6 +1,6 @@
-import { Stack, useRouter, useFocusEffect } from 'expo-router';
+import { Stack, useRouter, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, Text, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Pressable, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,24 +11,57 @@ import { InputBar } from '@/components/InputBar';
 
 export default function RunScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const [currentDate, setCurrentDate] = useState('');
   const [entries, setEntries] = useState<{ word: string, phonetic: string }[]>([]);
+  const [isReadOnly, setIsReadOnly] = useState(false);
 
-  const loadEntries = useCallback(async () => {
+  useEffect(() => {
+    // Check if we are in read-only mode from history
+    if (params.entries) {
+      setIsReadOnly(true);
+      setEntries(JSON.parse(params.entries as string));
+    }
+  }, [params.entries]);
+
+  const handleAutomaticSave = useCallback(async () => {
+    if (isReadOnly) return;
     try {
-      const storedEntries = await AsyncStorage.getItem('entries');
-      if (storedEntries) {
-        setEntries(JSON.parse(storedEntries));
+      const todayString = new Date().toLocaleDateString();
+      const currentRunString = await AsyncStorage.getItem('currentRun');
+      
+      if (currentRunString) {
+        const currentRun = JSON.parse(currentRunString);
+        // If the saved run is from a previous day, archive it.
+        if (currentRun.date !== todayString && currentRun.entries.length > 0) {
+          const historyString = await AsyncStorage.getItem('history');
+          const history = historyString ? JSON.parse(historyString) : [];
+          const dayToSave = {
+            id: new Date(currentRun.date).getTime().toString(), // Use date for a stable ID
+            ...currentRun
+          };
+          const newHistory = [...history, dayToSave];
+          await AsyncStorage.setItem('history', JSON.stringify(newHistory));
+          // Clear current run for the new day
+          await AsyncStorage.removeItem('currentRun');
+          setEntries([]);
+        } else {
+          // It's the same day, just load the entries
+          setEntries(currentRun.entries);
+        }
+      } else {
+        // No current run, start fresh
+        setEntries([]);
       }
     } catch (e) {
-      console.error("Failed to load entries.", e);
+      console.error("Failed to handle automatic save.", e);
     }
-  }, []);
+  }, [isReadOnly]);
 
   useFocusEffect(
     useCallback(() => {
-      loadEntries();
-    }, [loadEntries])
+      handleAutomaticSave();
+    }, [handleAutomaticSave])
   );
 
   useEffect(() => {
@@ -53,7 +86,7 @@ export default function RunScreen() {
               <IconSymbol name="chevron.left" color="white" size={24} />
             </Pressable>
             <View style={{ flex: 1 }}>
-              <Text style={styles.dateText}>{currentDate}</Text>
+              <Text style={styles.dateText}>{isReadOnly ? params.date : currentDate}</Text>
             </View>
           </View>
           <ScrollView contentContainerStyle={styles.entriesContainer}>
@@ -62,9 +95,11 @@ export default function RunScreen() {
             ))}
           </ScrollView>
 
-          <Pressable onPress={() => router.push('/entry-writer')} style={styles.inputWrapper}>
-            <InputBar value="" />
-          </Pressable>
+          {!isReadOnly && (
+            <Pressable onPress={() => router.push('/entry-writer')} style={styles.inputWrapper}>
+              <InputBar value="" />
+            </Pressable>
+          )}
         </SafeAreaView>
       </GestureHandlerRootView>
     </>
