@@ -136,8 +136,7 @@ const styles = StyleSheet.create({
     top: 45,
     right: 25,
     padding: 10,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 20,
+    zIndex: 2,
   },
   header: {
     borderBottomWidth: 1,

@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { InputBar } from '@/components/InputBar';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import { SearchResultCard } from '@/components/SearchResultCard';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -68,9 +69,9 @@ export default function EntryWriterModal() {
   };
 
   return (
-    <Pressable style={styles.overlay} onPress={() => router.back()}>
+    <SafeAreaView style={styles.overlay}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <SafeAreaView style={styles.modalContainer}>
+        <View style={styles.modalContainer}>
           <Pressable style={styles.modalContent} onPress={(e) => e.stopPropagation()}>
             <View style={styles.modalInputWrapper}>
               <InputBar
@@ -78,6 +79,7 @@ export default function EntryWriterModal() {
                 value={entry}
                 onChangeText={handleSearch}
                 onSubmitEditing={() => {}}
+                onClose={() => router.back()}
               />
               {searchResults.length > 0 && (
                 <FlatList
@@ -95,16 +97,16 @@ export default function EntryWriterModal() {
               )}
             </View>
           </Pressable>
-        </SafeAreaView>
+        </View>
       </GestureHandlerRootView>
-    </Pressable>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: 'rgba(0, 0, 0, 0.95)',
   },
   modalContainer: {
     flex: 1,
