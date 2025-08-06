@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
     marginBottom: 15,
     height: 80, // Give the row a fixed height to contain the bubbles
   },
@@ -62,7 +62,8 @@ const styles = StyleSheet.create({
   },
   bubbleText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 26,
+    fontWeight: 'bold',
     textAlign: 'center',
   },
 });

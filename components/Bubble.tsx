@@ -13,7 +13,7 @@ interface PulseType {
   id: number;
 }
 
-const Pulse = ({ onComplete, color }: { onComplete: () => void; color: string }) => {
+const Pulse = ({ onComplete, color, borderRadius }: { onComplete: () => void; color: string; borderRadius: number }) => {
   const pulse = useSharedValue(1);
 
   React.useEffect(() => {
@@ -27,6 +27,7 @@ const Pulse = ({ onComplete, color }: { onComplete: () => void; color: string })
   const animatedPulseStyle = useAnimatedStyle(() => ({
     transform: [{ scale: pulse.value }],
     opacity: 1 - pulse.value / 2.5,
+    borderRadius: borderRadius,
   }));
 
   return <Animated.View style={[styles.pulse, { backgroundColor: color }, animatedPulseStyle]} />;
@@ -81,16 +82,13 @@ export function Bubble({
       borderRadius: size / 2,
       backgroundColor: color,
     },
-    pulse: {
-      borderRadius: size / 2,
-    },
   };
 
   return (
     <GestureDetector gesture={tap}>
       <Animated.View style={[styles.waterDrop, dynamicStyles.waterDrop, animatedOpacityStyle]}>
         {pulses.map((p) => (
-          <Pulse key={p.id} onComplete={() => removePulse(p.id)} color={color} />
+          <Pulse key={p.id} onComplete={() => removePulse(p.id)} color={color} borderRadius={size / 2} />
         ))}
         {children}
       </Animated.View>
