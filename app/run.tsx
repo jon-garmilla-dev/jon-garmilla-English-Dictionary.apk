@@ -82,7 +82,7 @@ export default function RunScreen() {
             end={{ x: 1, y: 0 }}
           />
           <View style={styles.header}>
-            <Pressable onPress={() => router.back()} style={styles.backButton}>
+            <Pressable onPress={() => router.replace('/')} style={styles.backButton}>
               <IconSymbol name="chevron.left" color="white" size={24} />
             </Pressable>
             <View style={{ flex: 1 }}>

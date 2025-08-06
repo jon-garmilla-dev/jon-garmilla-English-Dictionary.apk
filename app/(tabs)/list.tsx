@@ -5,6 +5,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SearchResultCard } from '@/components/SearchResultCard';
+import { LandscapeBackground } from '@/components/LandscapeBackground';
 
 interface Day {
   id: string;
@@ -52,12 +53,7 @@ export default function ListScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={['rgba(84,58,183,1)', 'rgba(0,172,193,1)']}
-        style={StyleSheet.absoluteFill}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-      />
+      <LandscapeBackground />
       <Text style={styles.title}>History</Text>
       <FlatList
         data={history}
