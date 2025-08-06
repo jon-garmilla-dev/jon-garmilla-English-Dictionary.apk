@@ -14,7 +14,6 @@ import Svg, { Path } from 'react-native-svg';
 
 const { width, height } = Dimensions.get('window');
 
-// Colors from the user's CSS
 const v1 = '#be91c6';
 const v2 = '#8a65cc';
 const v3 = '#5e30d9';
@@ -110,7 +109,6 @@ export function LandscapeBackground() {
           colors={['#fea79855', v2]}
           style={StyleSheet.absoluteFill}
         />
-        {/* Reflections */}
         <View style={styles.reflection1} />
         <View style={styles.reflection2} />
         <View style={styles.reflection3} />
@@ -156,7 +154,7 @@ const styles = StyleSheet.create({
     height: height * 0.15,
     bottom: '50%',
     left: -width * 0.1,
-    backgroundColor: v3, // Simplified background
+    backgroundColor: v3,
     borderTopLeftRadius: width * 0.9,
     borderTopRightRadius: width * 0.5,
   },
@@ -165,7 +163,7 @@ const styles = StyleSheet.create({
     height: height * 0.075,
     bottom: '50%',
     left: width * 0.05,
-    backgroundColor: v4, // Simplified background
+    backgroundColor: v4,
     borderTopLeftRadius: width * 0.6,
     borderTopRightRadius: width * 0.3,
   },
@@ -174,7 +172,7 @@ const styles = StyleSheet.create({
     height: height * 0.06,
     bottom: '50%',
     right: -width * 0.425,
-    backgroundColor: v4, // Simplified background
+    backgroundColor: v4,
     borderTopLeftRadius: width * 0.4,
   },
   reflection1: {
@@ -183,7 +181,7 @@ const styles = StyleSheet.create({
     height: height * 0.10,
     top: -5,
     left: -width * 0.1,
-    backgroundColor: '#a77db4', // Blended solid color
+    backgroundColor: '#a77db4',
     borderTopLeftRadius: width * 0.9,
     borderTopRightRadius: width * 0.5,
     transform: [{ scaleY: -0.9 }, { scaleX: -1 }],
@@ -195,11 +193,11 @@ const styles = StyleSheet.create({
     height: height * 0.075,
     top: -13,
     left: width * 0.05,
-    backgroundColor: '#a77db4', // Blended solid color
+    backgroundColor: '#a77db4',
     borderTopLeftRadius: width * 0.6,
     borderTopRightRadius: width * 0.3,
     transform: [{ scaleY: -0.6 }, { scaleX: -1 }],
-    zIndex: 2, // On top of reflection1
+    zIndex: 2,
   },
   reflection3: {
     position: 'absolute',
@@ -207,7 +205,7 @@ const styles = StyleSheet.create({
     height: height * 0.06,
     top: -10,
     right: -width * 0.425,
-    backgroundColor: '#a77db4', // Blended solid color
+    backgroundColor: '#a77db4',
     borderTopLeftRadius: width * 0.4,
     transform: [{ scaleY: -0.6 }],
   },

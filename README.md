@@ -1,50 +1,40 @@
-# Welcome to your Expo app 👋
+# English Dictionary Mobile App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is a mobile application built with Expo that allows users to search for English words, view their definitions, and save them to a history.
 
-## Get started
+## Features
 
-1. Install dependencies
+- Search for English words using the Datamuse API and the DictionaryAPI.
+- View detailed information about a word, including phonetics, definitions, and synonyms.
+- Save words to a daily run.
+- View a history of all saved words.
+- Dark and light mode support.
 
+## Getting Started
+
+1. **Install dependencies:**
    ```bash
    npm install
    ```
 
-2. Start the app
-
+2. **Start the app:**
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+This will open the Expo developer tools in your browser. You can then run the app on a physical device using the Expo Go app or on a simulator.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Project Structure
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+The project is organized as follows:
 
-## Get a fresh project
+- `app/`: Contains the different screens of the application, using file-based routing.
+- `components/`: Contains reusable components used throughout the application.
+- `constants/`: Contains constants such as colors.
+- `context/`: Contains the context providers for the application.
+- `hooks/`: Contains custom hooks.
+- `assets/`: Contains the assets used in the application, such as fonts and images.
 
-When you're ready, run:
+## Contributing
 
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Contributions are welcome! Please feel free to submit a pull request or open an issue.

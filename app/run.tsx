@@ -102,7 +102,7 @@ export default function RunScreen() {
                 <IconSymbol name="pencil" color={isEditing ? '#ff9500' : 'white'} size={24} />
               </Pressable>
             ) : (
-              <View style={styles.headerButton} /> // Spacer
+              <View style={styles.headerButton} />
             )}
           </View>
           <ScrollView contentContainerStyle={styles.entriesContainer}>
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   },
   headerButton: {
     padding: 10,
-    width: 44, // Ensure buttons have same width for centering
+    width: 44,
     alignItems: 'center',
   },
   entriesContainer: {

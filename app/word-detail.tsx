@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 25,
-    paddingTop: 60, // Space for close button
+    paddingTop: 60,
   },
   closeButton: {
     position: 'absolute',

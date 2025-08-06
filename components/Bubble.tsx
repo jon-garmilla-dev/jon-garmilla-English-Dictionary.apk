@@ -46,7 +46,7 @@ export function Bubble({
   onPress,
   color = 'whitesmoke',
   opacity: initialOpacity = 0.8,
-  size = 200, // Default size is 200
+  size = 200,
 }: BubbleProps) {
   const opacity = useSharedValue(initialOpacity);
   const [pulses, setPulses] = useState<PulseType[]>([]);

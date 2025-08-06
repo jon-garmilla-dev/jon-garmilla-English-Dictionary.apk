@@ -52,7 +52,6 @@ export default function EntryWriterModal() {
       const storedRunString = await AsyncStorage.getItem('currentRun');
       const currentRun = storedRunString ? JSON.parse(storedRunString) : { date: todayString, entries: [] };
       
-      // Ensure we are adding to today's run, even if the stored one is old (should be handled by run screen, but as a safeguard)
       if (currentRun.date !== todayString) {
         currentRun.entries = [];
         currentRun.date = todayString;

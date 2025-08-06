@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   },
   animatedContainer: {
     position: 'absolute',
-    left: 30, // to match the paddingHorizontal
+    left: 30,
     height: 60,
   },
   bubbleText: {

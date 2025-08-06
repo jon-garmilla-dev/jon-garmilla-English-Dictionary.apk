@@ -20,7 +20,6 @@ export default function ListScreen() {
   const loadHistory = useCallback(async () => {
     try {
       const historyString = await AsyncStorage.getItem('history');
-      // Sort history from newest to oldest
       const parsedHistory = historyString ? JSON.parse(historyString) : [];
       setHistory(parsedHistory.reverse());
     } catch (e) {
