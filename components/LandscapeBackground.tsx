@@ -10,6 +10,7 @@ import Animated, {
   withSequence,
   withDelay,
 } from 'react-native-reanimated';
+import Svg, { Path } from 'react-native-svg';
 
 const { width, height } = Dimensions.get('window');
 
@@ -29,8 +30,8 @@ const Light = ({ delay, top, width, left }: { delay: number; top: DimensionValue
   useEffect(() => {
     const animation = withRepeat(
       withSequence(
-        withDelay(delay, withTiming(0.6, { duration: 75 })), // 50% slower
-        withTiming(0, { duration: 2250 }) // 50% slower
+        withDelay(delay, withTiming(0.6, { duration: 75 })),
+        withTiming(0, { duration: 2250 })
       ),
       -1
     );
@@ -44,6 +45,31 @@ const Light = ({ delay, top, width, left }: { delay: number; top: DimensionValue
   }));
 
   return <Animated.View style={[styles.light, { top, width, left }, animatedStyle]} />;
+};
+
+const Splash = ({ delay, style }: { delay: number, style: any }) => {
+  const scale = useSharedValue(0);
+  const opacity = useSharedValue(1);
+
+  useEffect(() => {
+    const scaleAnimation = withRepeat(
+      withDelay(delay, withTiming(1, { duration: 4000, easing: Easing.out(Easing.ease) })),
+      -1
+    );
+    const opacityAnimation = withRepeat(
+      withDelay(delay, withTiming(0, { duration: 4000, easing: Easing.out(Easing.ease) })),
+      -1
+    );
+    scale.value = scaleAnimation;
+    opacity.value = opacityAnimation;
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
+  }));
+
+  return <Animated.View style={[styles.splash, style, animatedStyle]} />;
 };
 
 export function LandscapeBackground() {
@@ -84,17 +110,23 @@ export function LandscapeBackground() {
           colors={['#fea79855', v2]}
           style={StyleSheet.absoluteFill}
         />
+        {/* Reflections */}
+        <View style={styles.reflection1} />
+        <View style={styles.reflection2} />
+        <View style={styles.reflection3} />
+
         <View style={styles.horizonLine} />
-        <Light delay={0} top="1%" width="30%" left="45.5%" />
-        <Light delay={500} top="3%" width="3%" left="54%" />
+        <Light delay={0} top="1%" width="15%" left="52.5%" />
+        <Light delay={500} top="3%" width="12%" left="54%" />
         <Light delay={1000} top="5%" width="10%" left="55%" />
         <Light delay={1500} top="2%" width="14%" left="53%" />
         <Light delay={2000} top="4%" width="11%" left="54.5%" />
+        <Splash delay={0} style={{ bottom: height * 0.05, left: '20%', width: width * 0.1, height: width * 0.1 }} />
+        <Splash delay={1000} style={{ bottom: height * 0.1, left: '30%', width: width * 0.08, height: width * 0.08 }} />
+        <Splash delay={2000} style={{ bottom: height * 0.08, left: '15%', width: width * 0.12, height: width * 0.12 }} />
+        <Splash delay={3000} style={{ bottom: height * 0.15, left: '25%', width: width * 0.09, height: width * 0.09 }} />
+        <Splash delay={4000} style={{ bottom: height * 0.06, left: '10%', width: width * 0.11, height: width * 0.11 }} />
       </View>
-
-      <View style={[styles.lotus, styles.lotus1]} />
-      <View style={[styles.lotus, styles.lotus2]} />
-      <View style={[styles.lotus, styles.lotus3]} />
       
       <View style={styles.front}>
         <View style={styles.stone} />
@@ -145,6 +177,40 @@ const styles = StyleSheet.create({
     backgroundColor: v4, // Simplified background
     borderTopLeftRadius: width * 0.4,
   },
+  reflection1: {
+    position: 'absolute',
+    width: width * 0.4,
+    height: height * 0.10,
+    top: -5,
+    left: -width * 0.1,
+    backgroundColor: '#a77db4', // Blended solid color
+    borderTopLeftRadius: width * 0.9,
+    borderTopRightRadius: width * 0.5,
+    transform: [{ scaleY: -0.9 }, { scaleX: -1 }],
+    zIndex: 1,
+  },
+  reflection2: {
+    position: 'absolute',
+    width: width * 0.4,
+    height: height * 0.075,
+    top: -13,
+    left: width * 0.05,
+    backgroundColor: '#a77db4', // Blended solid color
+    borderTopLeftRadius: width * 0.6,
+    borderTopRightRadius: width * 0.3,
+    transform: [{ scaleY: -0.6 }, { scaleX: -1 }],
+    zIndex: 2, // On top of reflection1
+  },
+  reflection3: {
+    position: 'absolute',
+    width: width * 0.5,
+    height: height * 0.06,
+    top: -10,
+    right: -width * 0.425,
+    backgroundColor: '#a77db4', // Blended solid color
+    borderTopLeftRadius: width * 0.4,
+    transform: [{ scaleY: -0.6 }],
+  },
   water: {
     position: 'absolute',
     top: '50%',
@@ -177,33 +243,6 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
-  lotus: {
-    position: 'absolute',
-    width: width * 0.1,
-    height: height * 0.05,
-    backgroundColor: v3,
-    borderRadius: width * 0.05,
-    opacity: 0.7,
-  },
-  lotus1: {
-    bottom: height * 0.1,
-    right: width * 0.05,
-    width: width * 0.2,
-  },
-  lotus2: {
-    bottom: height * 0.2,
-    right: width * 0.15,
-    height: height * 0.03,
-    transform: [{ skewX: '-10deg' }],
-    opacity: 0.5,
-  },
-  lotus3: {
-    bottom: height * 0.1,
-    right: width * 0.35,
-    transform: [{ rotate: '180deg' }, { skewX: '-20deg' }],
-    opacity: 0.8,
-    width: width * 0.15,
-  },
   cloud: {
     position: 'absolute',
     width: width * 0.8,
@@ -220,6 +259,12 @@ const styles = StyleSheet.create({
     top: '24%',
     left: '20%',
     opacity: 0.2,
+  },
+  splash: {
+    position: 'absolute',
+    borderRadius: width * 0.06,
+    borderWidth: 2,
+    borderColor: s1,
   },
   front: {
     position: 'absolute',
