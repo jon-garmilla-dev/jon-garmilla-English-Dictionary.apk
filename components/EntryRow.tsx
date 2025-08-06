@@ -75,7 +75,7 @@ export function EntryRow({ word, phonetic, isEditing, onDelete }: EntryRowProps)
       >
         <Animated.View style={[styles.leftContainer, phoneticAnimatedStyle, isEditing && styles.disabled]}>
           <PillBubble>
-            <Text style={styles.bubbleText} numberOfLines={1}>{phonetic}</Text>
+            <Text style={[styles.bubbleText, !phonetic && styles.fallbackText]} numberOfLines={1}>{phonetic || word}</Text>
           </PillBubble>
         </Animated.View>
       </Pressable>
@@ -136,6 +136,10 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  fallbackText: {
+    fontStyle: 'italic',
+    opacity: 0.8,
   },
   deleteText: {
     color: '#ff3b30',

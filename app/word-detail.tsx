@@ -56,12 +56,8 @@ export default function WordDetailModal() {
   const player = useAudioPlayer(audioUrl);
 
   const playSound = () => {
-    if (player.isLoaded) {
-      player.seekTo(0);
-      player.play();
-    } else {
-      player.play();
-    }
+    player.seekTo(0);
+    player.play();
   };
 
   if (!wordDetails) {
