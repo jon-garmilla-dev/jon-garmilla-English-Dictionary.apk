@@ -15,9 +15,9 @@ export default function RunScreen() {
   const [currentDate, setCurrentDate] = useState('');
   const [entries, setEntries] = useState<{ word: string, phonetic: string }[]>([]);
   const [isReadOnly, setIsReadOnly] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    // Check if we are in read-only mode from history
     if (params.entries) {
       setIsReadOnly(true);
       setEntries(JSON.parse(params.entries as string));
@@ -32,25 +32,21 @@ export default function RunScreen() {
       
       if (currentRunString) {
         const currentRun = JSON.parse(currentRunString);
-        // If the saved run is from a previous day, archive it.
         if (currentRun.date !== todayString && currentRun.entries.length > 0) {
           const historyString = await AsyncStorage.getItem('history');
           const history = historyString ? JSON.parse(historyString) : [];
           const dayToSave = {
-            id: new Date(currentRun.date).getTime().toString(), // Use date for a stable ID
+            id: new Date(currentRun.date).getTime().toString(),
             ...currentRun
           };
           const newHistory = [...history, dayToSave];
           await AsyncStorage.setItem('history', JSON.stringify(newHistory));
-          // Clear current run for the new day
           await AsyncStorage.removeItem('currentRun');
           setEntries([]);
         } else {
-          // It's the same day, just load the entries
           setEntries(currentRun.entries);
         }
       } else {
-        // No current run, start fresh
         setEntries([]);
       }
     } catch (e) {
@@ -63,6 +59,21 @@ export default function RunScreen() {
       handleAutomaticSave();
     }, [handleAutomaticSave])
   );
+
+  const handleDeleteEntry = async (indexToDelete: number) => {
+    const newEntries = entries.filter((_, index) => index !== indexToDelete);
+    setEntries(newEntries);
+    try {
+      const storedRunString = await AsyncStorage.getItem('currentRun');
+      if (storedRunString) {
+        const currentRun = JSON.parse(storedRunString);
+        const newRun = { ...currentRun, entries: newEntries };
+        await AsyncStorage.setItem('currentRun', JSON.stringify(newRun));
+      }
+    } catch (e) {
+      console.error("Failed to delete entry.", e);
+    }
+  };
 
   useEffect(() => {
     const date = new Date();
@@ -82,16 +93,27 @@ export default function RunScreen() {
             end={{ x: 1, y: 0 }}
           />
           <View style={styles.header}>
-            <Pressable onPress={() => router.replace('/')} style={styles.backButton}>
+            <Pressable onPress={() => router.replace('/')} style={styles.headerButton}>
               <IconSymbol name="chevron.left" color="white" size={24} />
             </Pressable>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.dateText}>{isReadOnly ? params.date : currentDate}</Text>
-            </View>
+            <Text style={styles.dateText}>{isReadOnly ? params.date : currentDate}</Text>
+            {!isReadOnly ? (
+              <Pressable onPress={() => setIsEditing(!isEditing)} style={styles.headerButton}>
+                <IconSymbol name="pencil" color={isEditing ? '#ff9500' : 'white'} size={24} />
+              </Pressable>
+            ) : (
+              <View style={styles.headerButton} /> // Spacer
+            )}
           </View>
           <ScrollView contentContainerStyle={styles.entriesContainer}>
             {entries.map((item, index) => (
-              <EntryRow key={index} word={item.word} phonetic={item.phonetic} />
+              <EntryRow
+                key={index}
+                word={item.word}
+                phonetic={item.phonetic}
+                isEditing={isEditing}
+                onDelete={() => handleDeleteEntry(index)}
+              />
             ))}
           </ScrollView>
 
@@ -119,14 +141,17 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   dateText: {
+    flex: 1,
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
     opacity: 0.7,
-    textAlign: 'right',
+    textAlign: 'center',
   },
-  backButton: {
+  headerButton: {
     padding: 10,
+    width: 44, // Ensure buttons have same width for centering
+    alignItems: 'center',
   },
   entriesContainer: {
     paddingVertical: 10,

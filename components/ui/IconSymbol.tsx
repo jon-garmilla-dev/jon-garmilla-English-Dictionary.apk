@@ -23,6 +23,8 @@ const MAPPING = {
   'speaker.wave.2.fill': 'volume-up',
   'xmark': 'close',
   'list.bullet': 'format-list-bulleted',
+  'pencil': 'edit',
+  'trash.fill': 'delete',
 } as IconMapping;
 
 /**

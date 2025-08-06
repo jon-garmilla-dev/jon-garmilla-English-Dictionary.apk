@@ -3,13 +3,16 @@ import { StyleSheet, View, Text, Pressable } from 'react-native';
 import { PillBubble } from './PillBubble';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
+import { IconSymbol } from './ui/IconSymbol';
 
 interface EntryRowProps {
   word: string;
   phonetic: string;
+  isEditing?: boolean;
+  onDelete?: () => void;
 }
 
-export function EntryRow({ word, phonetic }: EntryRowProps) {
+export function EntryRow({ word, phonetic, isEditing, onDelete }: EntryRowProps) {
   const router = useRouter();
   const wordOpacity = useSharedValue(0);
   const phoneticOpacity = useSharedValue(1);
@@ -22,24 +25,19 @@ export function EntryRow({ word, phonetic }: EntryRowProps) {
   });
 
   const phoneticAnimatedStyle = useAnimatedStyle(() => {
-    // console.log('Phonetic opacity is now:', phoneticOpacity.value);
     return {
-      opacity: phoneticOpacity.value,
-    };
-  });
-
-  const phoneticAnimatedStyleRight = useAnimatedStyle(() => {
-    return {
-      opacity: phoneticOpacity.value,
+      opacity: isEditing ? 1 : phoneticOpacity.value,
     };
   });
 
   const handlePressIn = () => {
+    if (isEditing) return;
     wordOpacity.value = withTiming(1, { duration: 200 });
     phoneticOpacity.value = withTiming(0, { duration: 200 });
   };
 
   const handlePressOut = () => {
+    if (isEditing) return;
     wordOpacity.value = withTiming(0, { duration: 200 });
     phoneticOpacity.value = withTiming(1, { duration: 200 });
   };
@@ -70,35 +68,40 @@ export function EntryRow({ word, phonetic }: EntryRowProps) {
 
   return (
     <View style={styles.rowContainer}>
-        <Pressable
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-        >
-          <Animated.View style={[styles.leftContainer, phoneticAnimatedStyle]}>
-            <PillBubble>
-              <Text style={styles.bubbleText} numberOfLines={1}>{phonetic}</Text>
-            </PillBubble>
-          </Animated.View>
-        </Pressable>
-        <Pressable
-          onPress={fetchWordDetails}
-          onPressIn={(e) => e.stopPropagation()}
-          style={styles.rightContainer}
-        >
-          <Animated.View style={phoneticAnimatedStyleRight}>
-            <PillBubble>
-              <Text style={styles.bubbleText}>?</Text>
-            </PillBubble>
-          </Animated.View>
-        </Pressable>
-
-        <Animated.View style={[styles.animatedContainer, wordAnimatedStyle]}>
-          <View style={styles.bubbleContainer}>
-            <PillBubble color="rgba(0,0,0,0.4)">
-              <Text style={styles.bubbleText} numberOfLines={1}>{word}</Text>
-            </PillBubble>
-          </View>
+      <Pressable
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        disabled={isEditing}
+      >
+        <Animated.View style={[styles.leftContainer, phoneticAnimatedStyle, isEditing && styles.disabled]}>
+          <PillBubble>
+            <Text style={styles.bubbleText} numberOfLines={1}>{phonetic}</Text>
+          </PillBubble>
         </Animated.View>
+      </Pressable>
+      
+      <Pressable
+        onPress={isEditing ? onDelete : fetchWordDetails}
+        style={styles.rightContainer}
+      >
+        <Animated.View style={phoneticAnimatedStyle}>
+          <PillBubble>
+            {isEditing ? (
+              <Text style={styles.deleteText}>X</Text>
+            ) : (
+              <Text style={styles.bubbleText}>?</Text>
+            )}
+          </PillBubble>
+        </Animated.View>
+      </Pressable>
+
+      <Animated.View style={[styles.animatedContainer, wordAnimatedStyle]}>
+        <View style={styles.bubbleContainer}>
+          <PillBubble color="rgba(0,0,0,0.4)">
+            <Text style={styles.bubbleText} numberOfLines={1}>{word}</Text>
+          </PillBubble>
+        </View>
+      </Animated.View>
     </View>
   );
 }
@@ -111,20 +114,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 30,
     marginBottom: 15,
-    height: 80, // Give the row a fixed height to contain the bubbles
+    height: 80,
   },
   leftContainer: {
     height: 60,
   },
   rightContainer: {
     height: 60,
+    justifyContent: 'center',
   },
   bubbleContainer: {
-    height: 60, // A fixed height for the pill
+    height: 60,
   },
   animatedContainer: {
     position: 'absolute',
-    right: 30, // to align with the right padding
+    right: 30,
     height: 60,
   },
   bubbleText: {
@@ -133,4 +137,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  deleteText: {
+    color: '#ff3b30',
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  disabled: {
+    opacity: 0.5,
+  }
 });
