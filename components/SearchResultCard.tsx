@@ -1,5 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 
 interface SearchResultCardProps {
   word: string;
@@ -9,15 +15,42 @@ interface SearchResultCardProps {
 }
 
 export function SearchResultCard({ word, phonetic, definition, onPress }: SearchResultCardProps) {
+  const [isHovered, setIsHovered] = useState(false);
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  });
+
+  const handlePress = () => {
+    scale.value = withSequence(
+      withTiming(0.95, { duration: 100 }),
+      withTiming(1, { duration: 100 })
+    );
+    setTimeout(() => {
+      onPress();
+    }, 200);
+  };
+
   return (
-    <Pressable onPress={onPress}>
-      <View style={styles.card}>
+    <Pressable
+      onPress={handlePress}
+      onPressIn={() => setIsHovered(true)}
+      onPressOut={() => setIsHovered(false)}
+    >
+      <Animated.View style={[
+        styles.card,
+        animatedStyle,
+        isHovered && styles.cardHovered
+      ]}>
         <View style={styles.topRow}>
           <Text style={styles.wordText}>{word}</Text>
           <Text style={styles.phoneticText}>{phonetic}</Text>
         </View>
         <Text style={styles.definitionText}>{definition}</Text>
-      </View>
+      </Animated.View>
     </Pressable>
   );
 }
@@ -28,6 +61,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  cardHovered: {
+    borderColor: 'white',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
   topRow: {
     flexDirection: 'row',
