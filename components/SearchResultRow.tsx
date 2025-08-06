@@ -1,15 +1,16 @@
 import React from 'react';
-import { StyleSheet, View, Text, Dimensions, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { PillBubble } from './PillBubble';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
-interface EntryRowProps {
+interface SearchResultRowProps {
   word: string;
   phonetic: string;
+  onPress: () => void;
 }
 
-export function EntryRow({ word, phonetic }: EntryRowProps) {
-  const opacity = useSharedValue(0); // Start fully transparent
+export function SearchResultRow({ word, phonetic, onPress }: SearchResultRowProps) {
+  const opacity = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -27,22 +28,20 @@ export function EntryRow({ word, phonetic }: EntryRowProps) {
 
   return (
     <Pressable
+      onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
     >
-      <View style={styles.rowContainer}>
+      <View style={styles.container}>
         <View style={styles.bubbleContainer}>
           <PillBubble>
-            <Text style={styles.bubbleText} numberOfLines={1}>{phonetic}</Text>
+            <Text style={styles.bubbleText}>{phonetic}</Text>
           </PillBubble>
         </View>
-
         <Animated.View style={[styles.animatedContainer, animatedStyle]}>
-          <View style={styles.bubbleContainer}>
-            <PillBubble color="rgba(0,0,0,0.4)">
-              <Text style={styles.bubbleText} numberOfLines={1}>{word}</Text>
-            </PillBubble>
-          </View>
+          <PillBubble color="rgba(0,0,0,0.4)">
+            <Text style={styles.bubbleText}>{word}</Text>
+          </PillBubble>
         </Animated.View>
       </View>
     </Pressable>
@@ -50,21 +49,19 @@ export function EntryRow({ word, phonetic }: EntryRowProps) {
 }
 
 const styles = StyleSheet.create({
-  rowContainer: {
-    width: '100%',
+  container: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
     alignItems: 'center',
     paddingHorizontal: 30,
     marginBottom: 15,
-    height: 80, // Give the row a fixed height to contain the bubbles
+    height: 80,
   },
   bubbleContainer: {
-    height: 60, // A fixed height for the pill
+    height: 60,
   },
   animatedContainer: {
     position: 'absolute',
-    right: 30, // to align with the right padding
+    left: 30, // to match the paddingHorizontal
     height: 60,
   },
   bubbleText: {
