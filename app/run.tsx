@@ -4,6 +4,7 @@ import { StyleSheet, View, Text, ScrollView, Pressable, Modal, FlatList } from '
 import { LinearGradient } from 'expo-linear-gradient';
 import { PillBubble } from '@/components/PillBubble';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import { EntryRow } from '@/components/EntryRow';
 import { SearchResultCard } from '@/components/SearchResultCard';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -72,14 +73,18 @@ export default function RunScreen() {
         <SafeAreaView style={styles.container}>
           <Stack.Screen options={{ headerShown: false }} />
           <LinearGradient
-            colors={['rgba(0,172,193,1)', 'rgba(255, 100, 80, 1)']}
+            colors={['rgba(0,172,193,1)', 'rgba(84,58,183,1)']}
             style={StyleSheet.absoluteFill}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
           />
           <View style={styles.header}>
-            <Text style={styles.dateText}>{currentDate}</Text>
-            <Pressable onPress={() => router.back()}>
-              <Text style={styles.backButtonText}>{'<-'}</Text>
+            <Pressable onPress={() => router.back()} style={styles.backButton}>
+              <IconSymbol name="chevron.left" color="white" size={24} />
             </Pressable>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.dateText}>{currentDate}</Text>
+            </View>
           </View>
           <ScrollView contentContainerStyle={styles.entriesContainer}>
             {entries.map((item, index) => (
@@ -107,7 +112,7 @@ export default function RunScreen() {
         <Pressable style={styles.overlay} onPress={handleClose}>
           <GestureHandlerRootView style={{ flex: 1 }}>
             <SafeAreaView style={styles.modalContainer}>
-              <Pressable>
+              <Pressable style={styles.modalContent}>
                 <View style={styles.modalInputWrapper}>
                   <InputBar
                     isEditing={true}
@@ -155,10 +160,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+    opacity: 0.7,
+    textAlign: 'right',
   },
-  backButtonText: {
-    color: 'white',
-    fontSize: 24,
+  backButton: {
+    padding: 10,
   },
   entriesContainer: {
     paddingVertical: 10,
@@ -175,8 +181,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
+  modalContent: {
+    flex: 1,
+  },
   modalInputWrapper: {
-    // No specific styles needed here anymore
+    flex: 1,
   },
   resultText: {
     color: 'white',

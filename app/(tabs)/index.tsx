@@ -1,20 +1,27 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, View, Text, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, Dimensions, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Defs, Path, G, Use } from 'react-native-svg';
-import Animated, {
+import Animated, * as Reanimated from 'react-native-reanimated';
+const {
   useSharedValue,
   useAnimatedProps,
   withTiming,
   withRepeat,
   Easing,
-} from 'react-native-reanimated';
+  useAnimatedStyle,
+  withSequence,
+} = Reanimated;
 import { Bubble } from '@/components/Bubble';
 
 const { height } = Dimensions.get('window');
 const AnimatedG = Animated.createAnimatedComponent(G);
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const [isPressed, setIsPressed] = useState(false);
+  const scale = useSharedValue(1);
   const wave1 = useSharedValue(-90);
   const wave2 = useSharedValue(-90);
   const wave3 = useSharedValue(-90);
@@ -32,6 +39,25 @@ export default function HomeScreen() {
   const animatedWave3Props = useAnimatedProps(() => ({ translateX: wave3.value }));
   const animatedWave4Props = useAnimatedProps(() => ({ translateX: wave4.value }));
 
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  });
+
+  const handlePress = () => {
+    if (isPressed) return;
+    setIsPressed(true);
+    scale.value = withSequence(
+      withTiming(1.2, { duration: 250 }),
+      withTiming(1, { duration: 250 })
+    );
+    setTimeout(() => {
+      router.push('/run');
+      setIsPressed(false);
+    }, 500);
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -40,9 +66,13 @@ export default function HomeScreen() {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
       />
-      <Bubble>
-        <Text style={styles.plusSign}>+</Text>
-      </Bubble>
+      <TouchableOpacity onPress={handlePress} disabled={isPressed}>
+        <Animated.View style={animatedStyle}>
+          <Bubble>
+            <Text style={styles.plusSign}>+</Text>
+          </Bubble>
+        </Animated.View>
+      </TouchableOpacity>
       <View style={styles.waveContainer}>
         <Svg
           style={styles.waves}
