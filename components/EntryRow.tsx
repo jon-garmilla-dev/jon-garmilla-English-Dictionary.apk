@@ -22,6 +22,13 @@ export function EntryRow({ word, phonetic }: EntryRowProps) {
   });
 
   const phoneticAnimatedStyle = useAnimatedStyle(() => {
+    // console.log('Phonetic opacity is now:', phoneticOpacity.value);
+    return {
+      opacity: phoneticOpacity.value,
+    };
+  });
+
+  const phoneticAnimatedStyleRight = useAnimatedStyle(() => {
     return {
       opacity: phoneticOpacity.value,
     };
@@ -78,11 +85,11 @@ export function EntryRow({ word, phonetic }: EntryRowProps) {
           onPressIn={(e) => e.stopPropagation()}
           style={styles.rightContainer}
         >
-          <View>
+          <Animated.View style={phoneticAnimatedStyleRight}>
             <PillBubble>
               <Text style={styles.bubbleText}>?</Text>
             </PillBubble>
-          </View>
+          </Animated.View>
         </Pressable>
 
         <Animated.View style={[styles.animatedContainer, wordAnimatedStyle]}>
