@@ -43,6 +43,13 @@ export default function RootLayout() {
             animation: 'fade',
           }}
         />
+        <Stack.Screen
+          name="entry-writer"
+          options={{
+            presentation: 'transparentModal',
+            animation: 'fade',
+          }}
+        />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
