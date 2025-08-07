@@ -96,7 +96,7 @@ export default function RunScreen() {
         <SafeAreaView style={styles.container}>
           <Stack.Screen options={{ headerShown: false }} />
           <LinearGradient
-            colors={['rgba(0,172,193,1)', 'rgba(84,58,183,1)']}
+            colors={['rgba(0,172,193,1)', '#2a73bc', 'rgba(84,58,183,1)']}
             style={StyleSheet.absoluteFill}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}

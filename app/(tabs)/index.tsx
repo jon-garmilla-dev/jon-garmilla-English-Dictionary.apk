@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Dimensions, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
+import { Bubble } from '@/components/Bubble';
 import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Defs, Path, G, Use } from 'react-native-svg';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, * as Reanimated from 'react-native-reanimated';
+import Svg, { Defs, G, Path, Use } from 'react-native-svg';
 const {
   useSharedValue,
   useAnimatedProps,
@@ -13,7 +14,6 @@ const {
   useAnimatedStyle,
   withSequence,
 } = Reanimated;
-import { Bubble } from '@/components/Bubble';
 
 const { height } = Dimensions.get('window');
 const AnimatedG = Animated.createAnimatedComponent(G);
@@ -61,7 +61,7 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['rgba(84,58,183,1)', 'rgba(0,172,193,1)']}
+        colors={['rgba(84,58,183,1)', '#2a73bc', 'rgba(0,172,193,1)']}
         style={StyleSheet.absoluteFill}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
