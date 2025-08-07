@@ -1,11 +1,10 @@
-import React, { useState, useCallback } from 'react';
-import { StyleSheet, View, Text, FlatList, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect, useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LinearGradient } from 'expo-linear-gradient';
-import { SearchResultCard } from '@/components/SearchResultCard';
 import { LandscapeBackground } from '@/components/LandscapeBackground';
+import { SearchResultCard } from '@/components/SearchResultCard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect, useRouter } from 'expo-router';
+import React, { useCallback, useState } from 'react';
+import { FlatList, StyleSheet, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface Day {
   id: string;

@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, FlatList, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { InputBar } from '@/components/InputBar';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import { SearchResultCard } from '@/components/SearchResultCard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function EntryWriterModal() {
   const router = useRouter();
@@ -48,17 +47,33 @@ export default function EntryWriterModal() {
 
   const handleAddEntry = async (word: string, phonetic: string) => {
     try {
-      const todayString = new Date().toLocaleDateString();
+      const todayString = new Date().toISOString().split('T')[0];
       const storedRunString = await AsyncStorage.getItem('currentRun');
-      const currentRun = storedRunString ? JSON.parse(storedRunString) : { date: todayString, entries: [] };
-      
-      if (currentRun.date !== todayString) {
-        currentRun.entries = [];
-        currentRun.date = todayString;
+      let currentRun = storedRunString ? JSON.parse(storedRunString) : { date: todayString, entries: [] };
+
+      if (currentRun.date !== todayString && currentRun.entries.length > 0) {
+        const historyString = await AsyncStorage.getItem('history');
+        const history = historyString ? JSON.parse(historyString) : [];
+        const dayToSave = {
+          id: currentRun.date,
+          ...currentRun,
+        };
+
+        const existingEntryIndex = history.findIndex((entry: any) => entry.id === dayToSave.id);
+
+        if (existingEntryIndex > -1) {
+          history[existingEntryIndex] = dayToSave;
+          await AsyncStorage.setItem('history', JSON.stringify(history));
+        } else {
+          const newHistory = [...history, dayToSave];
+          await AsyncStorage.setItem('history', JSON.stringify(newHistory));
+        }
+        
+        currentRun = { date: todayString, entries: [] };
       }
 
       const newEntries = [...currentRun.entries, { word, phonetic }];
-      const newRun = { ...currentRun, entries: newEntries };
+      const newRun = { ...currentRun, date: todayString, entries: newEntries };
       
       await AsyncStorage.setItem('currentRun', JSON.stringify(newRun));
       router.back();

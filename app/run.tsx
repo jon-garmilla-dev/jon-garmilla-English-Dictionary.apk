@@ -1,13 +1,13 @@
-import { Stack, useRouter, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, Text, ScrollView, Pressable, Alert } from 'react-native';
+import { EntryRow } from '@/components/EntryRow';
+import { InputBar } from '@/components/InputBar';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import { EntryRow } from '@/components/EntryRow';
+import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { InputBar } from '@/components/InputBar';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function RunScreen() {
   const router = useRouter();
@@ -27,7 +27,7 @@ export default function RunScreen() {
   const handleAutomaticSave = useCallback(async () => {
     if (isReadOnly) return;
     try {
-      const todayString = new Date().toLocaleDateString();
+      const todayString = new Date().toISOString().split('T')[0];
       const currentRunString = await AsyncStorage.getItem('currentRun');
       
       if (currentRunString) {
@@ -36,11 +36,20 @@ export default function RunScreen() {
           const historyString = await AsyncStorage.getItem('history');
           const history = historyString ? JSON.parse(historyString) : [];
           const dayToSave = {
-            id: new Date(currentRun.date).getTime().toString(),
-            ...currentRun
+            id: currentRun.date,
+            ...currentRun,
           };
-          const newHistory = [...history, dayToSave];
-          await AsyncStorage.setItem('history', JSON.stringify(newHistory));
+
+          const existingEntryIndex = history.findIndex((entry: any) => entry.id === dayToSave.id);
+
+          if (existingEntryIndex > -1) {
+            history[existingEntryIndex] = dayToSave;
+            await AsyncStorage.setItem('history', JSON.stringify(history));
+          } else {
+            const newHistory = [...history, dayToSave];
+            await AsyncStorage.setItem('history', JSON.stringify(newHistory));
+          }
+          
           await AsyncStorage.removeItem('currentRun');
           setEntries([]);
         } else {
