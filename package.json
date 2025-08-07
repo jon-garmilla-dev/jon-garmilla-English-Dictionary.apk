@@ -11,14 +11,6 @@
     "lint": "expo lint",
     "release": "standard-version"
   },
-  "standard-version": {
-    "bumpFiles": [
-      {
-        "filename": "app.json",
-        "updater": "json"
-      }
-    ]
-  },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
     "@react-navigation/bottom-tabs": "^7.3.10",

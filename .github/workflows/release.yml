@@ -37,7 +37,7 @@ jobs:
       run: |
         npm run release -- --skip.commit --skip.tag
         new_version=$(node -p "require('./package.json').version")
-        git add package.json CHANGELOG.md app.json
+        git add package.json CHANGELOG.md
         git commit -m "chore(release): $new_version"
         new_tag="v$new_version"
         git tag $new_tag
