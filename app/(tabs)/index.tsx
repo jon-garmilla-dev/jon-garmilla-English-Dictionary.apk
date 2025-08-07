@@ -1,4 +1,4 @@
-import { Bubble } from '@/components/Bubble';
+import { Bubble } from '@/components/common/Bubble';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';

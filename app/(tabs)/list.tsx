@@ -1,5 +1,5 @@
-import { LandscapeBackground } from '@/components/LandscapeBackground';
-import { SearchResultCard } from '@/components/SearchResultCard';
+import { LandscapeBackground } from '@/components/layout/LandscapeBackground';
+import { SearchResultCard } from '@/components/search/SearchResultCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';

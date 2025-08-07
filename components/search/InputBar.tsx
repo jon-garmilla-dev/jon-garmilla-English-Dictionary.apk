@@ -1,6 +1,6 @@
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import React from 'react';
-import { StyleSheet, View, Text, TextInput, Pressable } from 'react-native';
-import { IconSymbol } from './ui/IconSymbol';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 interface InputBarProps {
   isEditing?: boolean;

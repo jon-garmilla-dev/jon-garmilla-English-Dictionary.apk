@@ -1,5 +1,5 @@
-import { InputBar } from '@/components/InputBar';
-import { SearchResultCard } from '@/components/SearchResultCard';
+import { InputBar } from '@/components/search/InputBar';
+import { SearchResultCard } from '@/components/search/SearchResultCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';

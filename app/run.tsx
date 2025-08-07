@@ -1,5 +1,5 @@
-import { EntryRow } from '@/components/EntryRow';
-import { InputBar } from '@/components/InputBar';
+import { EntryRow } from '@/components/entry/EntryRow';
+import { InputBar } from '@/components/search/InputBar';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';

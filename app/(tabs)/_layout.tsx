@@ -1,8 +1,8 @@
+import { CustomTabBar } from '@/components/layout/CustomTabBar';
+import { TabNavigationProvider, useTabNavigation } from '@/context/TabNavigationContext';
 import React from 'react';
 import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { TabNavigationProvider, useTabNavigation } from '@/context/TabNavigationContext';
-import { CustomTabBar } from '@/components/CustomTabBar';
 
 import HomeScreen from './index';
 import ListScreen from './list';

@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useTabNavigation } from '@/context/TabNavigationContext';
-import { IconSymbol } from './ui/IconSymbol';
 import * as Haptics from 'expo-haptics';
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, {
-  useSharedValue,
   useAnimatedStyle,
+  useSharedValue,
   withSequence,
-  withTiming,
-  runOnJS,
+  withTiming
 } from 'react-native-reanimated';
 
 const Ripple = forwardRef((props, ref) => {

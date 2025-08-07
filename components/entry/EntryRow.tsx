@@ -1,9 +1,8 @@
-import React from 'react';
-import { StyleSheet, View, Text, Pressable } from 'react-native';
-import { PillBubble } from './PillBubble';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { PillBubble } from '@/components/common/PillBubble';
 import { useRouter } from 'expo-router';
-import { IconSymbol } from './ui/IconSymbol';
+import React from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 interface EntryRowProps {
   word: string;
